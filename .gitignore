@@ -3,3 +3,5 @@ out/
 *.mp4
 *.mov
 .DS_Store
+*.png
+!public/*.png
