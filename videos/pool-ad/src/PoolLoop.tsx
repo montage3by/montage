@@ -1,5 +1,6 @@
 import React, {useLayoutEffect, useRef} from 'react';
-import {AbsoluteFill, Img, random, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, Img, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AdText} from './AdText';
 
 // Every motion repeats with a period that divides LOOP_FRAMES, so the clip loops seamlessly.
 export const LOOP_FRAMES = 360; // 12 s at 30 fps
@@ -120,52 +121,6 @@ const Wobble: React.FC = () => {
 	);
 };
 
-// ---------- Sun glints on the water ----------
-
-const GLINTS = 26;
-
-const Glints: React.FC = () => {
-	const frame = useCurrentFrame();
-	return (
-		<svg width={IMG_W} height={IMG_H} style={{position: 'absolute', left: 0, top: 0, mixBlendMode: 'screen'}}>
-			<defs>
-				<radialGradient id="gl">
-					<stop offset="0" stopColor="#fff" stopOpacity={1} />
-					<stop offset="1" stopColor="#fff" stopOpacity={0} />
-				</radialGradient>
-				<clipPath id="pool2">
-					<path d={POOL_PATH} />
-				</clipPath>
-			</defs>
-			<g clipPath="url(#pool2)">
-				{new Array(GLINTS).fill(0).map((_, i) => {
-					const x = POOL_BOX.x + 200 + random(`gx${i}`) * (POOL_BOX.w - 220);
-					const y = POOL_BOX.y + 20 + random(`gy${i}`) * (POOL_BOX.h - 60);
-					const period = [60, 90, 120][i % 3];
-					const offset = Math.floor(random(`go${i}`) * period);
-					const q = ((frame + offset) % period) / period;
-					const life = q < 0.25 ? Math.sin((q / 0.25) * Math.PI) : 0;
-					if (life <= 0) return null;
-					const size = 6 + random(`gs${i}`) * 10;
-					const near = (y - POOL_BOX.y) / POOL_BOX.h;
-					const s = size * (0.6 + near * 0.8) * life;
-					return (
-						<g key={i} opacity={0.75 * life}>
-							<circle cx={x} cy={y} r={s * 1.6} fill="url(#gl)" />
-							<path
-								d={`M${x - s * 2.4},${y} L${x + s * 2.4},${y} M${x},${y - s * 1.4} L${x},${y + s * 1.4}`}
-								stroke="#fff"
-								strokeWidth={1.2}
-								strokeLinecap="round"
-							/>
-						</g>
-					);
-				})}
-			</g>
-		</svg>
-	);
-};
-
 // ---------- Warm sunlight breathing from the top right ----------
 
 const Sun: React.FC = () => {
@@ -231,9 +186,9 @@ export const PoolLoop: React.FC<{layout: Layout}> = ({layout}) => {
 				<Img src={IMG} style={{position: 'absolute', inset: 0, width: IMG_W, height: IMG_H}} />
 				<Wobble />
 				<Caustics />
-				<Glints />
 				<Sun />
 			</div>
+			<AdText layout={layout} />
 		</AbsoluteFill>
 	);
 };
