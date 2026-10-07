@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {
 	AbsoluteFill,
+	Img,
 	continueRender,
 	delayRender,
 	Easing,
@@ -177,6 +178,25 @@ const CtaArrow: React.FC<{local: number; vertical: boolean}> = ({local, vertical
 	);
 };
 
+// Sunrock logo (white files from sunrockresidences.com): sun symbol + wordmark.
+// The symbol sways gently with a period equal to the loop.
+const Logo: React.FC<{vertical: boolean}> = ({vertical}) => {
+	const frame = useCurrentFrame();
+	const {durationInFrames} = useVideoConfig();
+	const sway = Math.sin((frame / durationInFrames) * Math.PI * 2) * 10;
+	const symbol = vertical ? 76 : 64;
+	const textH = vertical ? 32 : 28;
+	return (
+		<div style={{display: 'flex', alignItems: 'center', gap: vertical ? 22 : 20}}>
+			<Img
+				src={staticFile('sunrock-symbol-white.svg')}
+				style={{width: symbol, height: symbol * (33.49 / 33.01), transform: `rotate(${sway}deg)`}}
+			/>
+			<Img src={staticFile('sunrock-text-white.svg')} style={{height: textH, width: textH * (365.628 / 33.312)}} />
+		</div>
+	);
+};
+
 export const AdText: React.FC<{layout: 'wide' | 'vertical'}> = ({layout}) => {
 	useFonts();
 	const frame = useCurrentFrame();
@@ -198,8 +218,8 @@ export const AdText: React.FC<{layout: 'wide' | 'vertical'}> = ({layout}) => {
 			<AbsoluteFill
 				style={
 					vertical
-						? {justifyContent: 'flex-start', alignItems: 'center', paddingTop: 300}
-						: {justifyContent: 'center', alignItems: 'flex-start', paddingLeft: 130}
+						? {justifyContent: 'flex-start', alignItems: 'center', paddingTop: 520}
+						: {justifyContent: 'center', alignItems: 'flex-start', paddingLeft: 130, paddingTop: 60}
 				}
 			>
 				<Slide
@@ -209,6 +229,16 @@ export const AdText: React.FC<{layout: 'wide' | 'vertical'}> = ({layout}) => {
 					vertical={vertical}
 					cta={index === SLIDES.length - 1}
 				/>
+			</AbsoluteFill>
+			{/* Logo stays on screen for the whole loop; below the top UI zone on 9:16 */}
+			<AbsoluteFill
+				style={
+					vertical
+						? {justifyContent: 'flex-start', alignItems: 'center', paddingTop: 250}
+						: {justifyContent: 'flex-start', alignItems: 'flex-start', paddingLeft: 130, paddingTop: 96}
+				}
+			>
+				<Logo vertical={vertical} />
 			</AbsoluteFill>
 		</AbsoluteFill>
 	);
