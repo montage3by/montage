@@ -4,4 +4,4 @@ out/
 *.mov
 .DS_Store
 *.png
-!public/*.png
+!**/public/*.png
